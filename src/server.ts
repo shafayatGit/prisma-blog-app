@@ -8,7 +8,7 @@ async function main() {
     console.log("Connected to DB");
 
     app.listen(PORT, () => {
-      console.log(`Surver is running on port: ${PORT}`);
+      console.log(`Server is running on port: ${PORT}`);
     });
   } catch (error) {
     console.log(error);

@@ -9,7 +9,7 @@ const createPost = async (req: Request, res: Response) => {
     console.log(error);
     res.status(404).json({
       status: false,
-      message: "Failed to create post",
+      message: "Failed to create the post",
     });
   }
 };
