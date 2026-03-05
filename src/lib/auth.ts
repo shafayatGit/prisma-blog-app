@@ -6,7 +6,7 @@ import nodemailer from "nodemailer";
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
-  secure: false, // Use true for port 465, false for port 587
+  secure: false, // Use true for port 465, false for port 587.
   auth: {
     user: process.env.APP_USER,
     pass: process.env.APP_PASS,
@@ -37,13 +37,13 @@ export const auth = betterAuth({
     },
   },
   emailAndPassword: {
-    enabled: true,
-    autoSignIn: false,
+    enabled: true, //must have to enable this
+    autoSignIn: false, //will not login auto.
     requireEmailVerification: true,
   },
   emailVerification: {
-    sendOnSignUp: true,
-    autoSignInAfterVerification: true,
+    sendOnSignUp: true, //only send in the time of registration(sign-up)
+    autoSignInAfterVerification: true, //after sign up it will automatically verify. no need to login again
     sendVerificationEmail: async ({ user, url, token }, request) => {
       // console.log({user,url,token})
       try {
@@ -116,6 +116,8 @@ export const auth = betterAuth({
 
   socialProviders: {
     google: {
+      prompt: "select_account consent", //will ask which mail want to use
+      accessType: "offline", //will refresh the token always
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
