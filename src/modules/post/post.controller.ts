@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { postServices } from "./post.service";
+import { boolean } from "better-auth";
 
 const createPost = async (req: Request, res: Response) => {
   if (!req.user) {
@@ -35,9 +36,13 @@ const getAllPosts = async (req: Request, res: Response) => {
     //searching by multiple value
     const tags = req.query.tags ? (req.query.tags as string).split(",") : [];
 
+    //searching by isFeatured
+    const isFeatured = req.query.isFeatured ? req.query.isFeatured === "true" : false
+
     const result = await postServices.getAllPosts({
       search: searchString,
       tags,
+      isFeatured
     });
     res.status(200).json({
       data: result,

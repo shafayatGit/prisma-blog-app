@@ -17,43 +17,54 @@ const createPost = async (
 };
 
 //Getting All the posts
-const getAllPosts = async (payload: {
+const getAllPosts = async ({
+  search,
+  tags,
+  isFeatured,
+}: {
   search: string | undefined;
   tags: string[] | [];
+  isFeatured: boolean;
 }) => {
   //searching through (title OR content OR single tag) OR (multiple tags)
   const andCondition: PostWhereInput[] = [];
-  if (payload.search) {
+  if (search) {
     andCondition.push({
       OR: [
         {
           title: {
-            contains: payload.search as string,
+            contains: search as string,
             mode: "insensitive", //case sensitive na
           },
         },
         {
           content: {
-            contains: payload.search as string,
+            contains: search as string,
             mode: "insensitive",
           },
         },
         {
           tags: {
             //an array
-            has: payload.search as string,
+            has: search as string,
           },
         },
       ],
     });
   }
 
-  if (payload.tags.length > 0) {
+  if (tags.length > 0) {
     andCondition.push({
       tags: {
         //using multiple tags for searching
-        hasEvery: payload.tags as string[],
+        hasEvery: tags as string[],
       },
+    });
+  }
+
+  if (typeof isFeatured == "boolean") {
+    andCondition.push({
+      isFeatured,
     });
   }
 
