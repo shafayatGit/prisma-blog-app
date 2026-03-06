@@ -29,7 +29,9 @@ const createPost = async (req: Request, res: Response) => {
 
 const getAllPosts = async (req: Request, res: Response) => {
   try {
-    const result = await postServices.getAllPosts();
+    const { search } = req.query;
+    const searchString = typeof search === "string" ? search : undefined;
+    const result = await postServices.getAllPosts({search:searchString});
     res.status(200).json({
       data: result,
     });
