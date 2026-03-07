@@ -34,7 +34,7 @@ const getAllPosts = async ({
         {
           title: {
             contains: search as string,
-            mode: "insensitive", //case sensitive na
+            mode: "insensitive", //case sensitive na.
           },
         },
         {
