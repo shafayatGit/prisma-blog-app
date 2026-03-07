@@ -10,7 +10,7 @@ async function seedAdmin() {
       role: UserRole.ADMIN,
       password: `${process.env.ADMIN_PASS}`,
     };
-    console.log(adminData);
+    // console.log(adminData);
 
     //?step 2: Checking the user is already available or not
     const existingUser = await prisma.user.findUnique({
@@ -48,7 +48,7 @@ async function seedAdmin() {
         },
       });
     }
-    console.log("Updated");
+    // console.log("Updated");
   } catch (error) {
     console.log(error);
   }

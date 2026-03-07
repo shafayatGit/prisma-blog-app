@@ -31,10 +31,14 @@ const createPost = async (req: Request, res: Response) => {
 
 const getAllPosts = async (req: Request, res: Response) => {
   try {
+    //! Pagination
+    const page = Number(req.query.page ?? 1);
+    const limit = Number(req.query.limit ?? 10);
+    const skip = (page - 1) * limit;
+    //!Searching
     // taking from the query
     const { search } = req.query;
     const { status } = req.query;
-    
 
     // typeHandling
     const searchString = typeof search === "string" ? search : undefined;
@@ -47,15 +51,19 @@ const getAllPosts = async (req: Request, res: Response) => {
           ? false
           : true
       : undefined;
- 
-      const authorId = req.query.authorId as string | undefined
+    const authorId = req.query.authorId as string | undefined;
 
     const result = await postServices.getAllPosts({
       search: searchString,
       status: statusType,
       tags,
       isFeatured,
-      authorId
+      authorId,
+
+      //pagination
+      page,
+      limit,
+      skip
     });
 
     return res.status(200).json({
