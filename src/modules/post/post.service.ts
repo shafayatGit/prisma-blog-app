@@ -1,4 +1,4 @@
-import { Post } from "../../../generated/prisma/client";
+import { Post, PostStatus } from "../../../generated/prisma/client";
 import { PostWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
 
@@ -19,14 +19,12 @@ const createPost = async (
 //Getting All the posts
 const getAllPosts = async ({
   search,
-  tags,
-  isFeatured,
+  status,
 }: {
   search: string | undefined;
-  tags: string[] | [];
-  isFeatured: boolean | undefined;
+  status: string | undefined;
 }) => {
-  //searching through (title OR content OR single tag) OR (multiple tags)
+  console.log(typeof status);
   const andCondition: PostWhereInput[] = [];
   if (search) {
     andCondition.push({
@@ -34,7 +32,7 @@ const getAllPosts = async ({
         {
           title: {
             contains: search as string,
-            mode: "insensitive", //case sensitive na.
+            mode: "insensitive",
           },
         },
         {
@@ -43,31 +41,15 @@ const getAllPosts = async ({
             mode: "insensitive",
           },
         },
-        {
-          tags: {
-            //an array
-            has: search as string,
-          },
-        },
       ],
     });
   }
-
-  if (tags.length > 0) {
+  // searching through enum value
+  if (status) {
     andCondition.push({
-      tags: {
-        //using multiple tags for searching
-        hasEvery: tags as string[],
-      },
+      status: status as PostStatus, // enum value
     });
   }
-
-  if (typeof isFeatured == "boolean") {
-    andCondition.push({
-      isFeatured,
-    });
-  }
-
   const result = await prisma.post.findMany({
     where: {
       AND: andCondition,

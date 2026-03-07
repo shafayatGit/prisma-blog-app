@@ -30,27 +30,19 @@ const createPost = async (req: Request, res: Response) => {
 
 const getAllPosts = async (req: Request, res: Response) => {
   try {
-    const { search } = req.query;
+    // taking from the query
+    const {search} = req.query;
+    const {status} = req.query;
+    // typeHandling
     const searchString = typeof search === "string" ? search : undefined;
-
-    //searching by multiple value
-    const tags = req.query.tags ? (req.query.tags as string).split(",") : [];
-
-    //searching by isFeatured
-    const isFeatured = req.query.isFeatured
-      ? req.query.isFeatured === "true"
-        ? true
-        : req.query.isFeatured === "false"
-          ? false
-          : undefined
-      : undefined;
+    const statusString = typeof status === "string" ? status : undefined;
 
     const result = await postServices.getAllPosts({
       search: searchString,
-      tags,
-      isFeatured,
+      status: statusString,
     });
-    res.status(200).json({
+
+    return res.status(200).json({
       data: result,
     });
   } catch (error) {
