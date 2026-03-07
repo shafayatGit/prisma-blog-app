@@ -22,11 +22,13 @@ const getAllPosts = async ({
   status,
   tags,
   isFeatured,
+  authorId,
 }: {
   search: string | undefined;
-  status: string | undefined;
+  status: PostStatus | undefined;
   tags: string[] | [];
   isFeatured: boolean | undefined;
+  authorId: string | undefined;
 }) => {
   // console.log(tags);
   const andCondition: PostWhereInput[] = [];
@@ -53,7 +55,7 @@ const getAllPosts = async ({
   // searching through enum value
   if (status) {
     andCondition.push({
-      status: status.toUpperCase() as PostStatus, // enum value
+      status, // enum value
     });
   }
 
@@ -71,6 +73,12 @@ const getAllPosts = async ({
   if (typeof isFeatured === "boolean") {
     andCondition.push({
       isFeatured,
+    });
+  }
+
+  if (authorId) {
+    andCondition.push({
+      authorId,
     });
   }
 
