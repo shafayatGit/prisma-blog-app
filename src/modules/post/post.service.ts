@@ -20,11 +20,15 @@ const createPost = async (
 const getAllPosts = async ({
   search,
   status,
+  tags,
+  isFeatured,
 }: {
   search: string | undefined;
   status: string | undefined;
+  tags: string[] | [];
+  isFeatured: boolean | undefined;
 }) => {
-  console.log(typeof status);
+  // console.log(tags);
   const andCondition: PostWhereInput[] = [];
   if (search) {
     andCondition.push({
@@ -35,6 +39,7 @@ const getAllPosts = async ({
             mode: "insensitive",
           },
         },
+
         {
           content: {
             contains: search as string,
@@ -44,12 +49,31 @@ const getAllPosts = async ({
       ],
     });
   }
+
   // searching through enum value
   if (status) {
     andCondition.push({
-      status: status as PostStatus, // enum value
+      status: status.toUpperCase() as PostStatus, // enum value
     });
   }
+
+  // searching through an array
+  if (tags.length > 0) {
+    andCondition.push({
+      tags: {
+        //using multiple tags for searching
+        hasEvery: tags as string[],
+      },
+    });
+  }
+
+  // Searching through boolean value
+  if (typeof isFeatured === "boolean") {
+    andCondition.push({
+      isFeatured,
+    });
+  }
+
   const result = await prisma.post.findMany({
     where: {
       AND: andCondition,
