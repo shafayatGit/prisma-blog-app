@@ -133,10 +133,24 @@ const getAllPosts = async ({
 };
 
 const getPostById = async (postId: string) => {
-  const result = await prisma.post.findUnique({
-    where: {
-      id: postId,
-    },
+  //!Integrating Transaction and Rollback --> means both have to be finished. If not then not anyone will perform
+  const result = await prisma.$transaction(async (tx) => {
+    await tx.post.update({
+      where: {
+        id: postId,
+      },
+      data: {
+        views: {
+          increment: 1,
+        },
+      },
+    });
+    const getPost = await tx.post.findUnique({
+      where: {
+        id: postId,
+      },
+    });
+    return getPost;
   });
   return result;
 };
