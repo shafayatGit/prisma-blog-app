@@ -9,5 +9,10 @@ router.post(
   auth(UserRole.USER, UserRole.ADMIN),
   commentController.createComment,
 );
+router.get(
+  "/:commentId",
+  auth(UserRole.USER, UserRole.ADMIN),
+  commentController.getCommentById,
+);
 
 export default router;

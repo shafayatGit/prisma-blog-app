@@ -18,6 +18,27 @@ const createComment = async (req: Request, res: Response) => {
     });
   }
 };
+
+const getCommentById = async (req: Request, res: Response) => {
+  try {
+     const { commentId } = req.params;
+    //  console.log(commentId)
+    if (!commentId) {
+      throw new Error("Comment id required");
+    }
+    const result = await commentService.getCommentById(commentId as string);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({
+      status: false,
+      message: "Failed to get comment",
+    });
+  }
+};
 export const commentController = {
   createComment,
+  getCommentById,
 };
