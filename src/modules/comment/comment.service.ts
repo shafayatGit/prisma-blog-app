@@ -117,7 +117,8 @@ const deleteComment = async (commentId: string, authorId: string) => {
 const updateComment = async (
   commentId: string,
   authorId: string,
-  { content, status }: { content?: string; status: CommentStatus },
+
+  data: { content?: string; status: CommentStatus },
 ) => {
   const commentData = await prisma.comment.findFirst({
     where: {
@@ -131,15 +132,13 @@ const updateComment = async (
   if (!commentData) {
     throw new Error("Comment not found!");
   }
+  // const updateData: { content?: string | null; status: CommentStatus } = { status };
   const result = await prisma.comment.update({
     where: {
       id: commentId,
       authorId,
     },
-    data: {
-      content,
-      status,
-    },
+    data,
   });
   return result;
 };
