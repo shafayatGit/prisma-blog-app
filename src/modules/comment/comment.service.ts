@@ -92,6 +92,8 @@ const getCommentByAuthorId = async (authorId: string) => {
 //-->CHECK -> 1. must have to be login
 //            2. authorId with comment's authorId
 
+//! For deleting in cascading order, we have to add onDelete:Cascade on the schema
+
 const deleteComment = async (commentId: string, authorId: string) => {
   const commentData = await prisma.comment.findFirst({
     where: {
