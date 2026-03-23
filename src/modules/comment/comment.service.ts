@@ -87,8 +87,32 @@ const getCommentByAuthorId = async (authorId: string) => {
   });
   return result;
 };
+
+//User can delete only his comment
+//-->CHECK -> 1. must have to be login
+//            2. authorId with comment's authorId
+
+const deleteComment = async (commentId: string, authorId: string) => {
+  const commentData = await prisma.comment.findFirst({
+    where: {
+      id: commentId,
+      authorId,
+    },
+  });
+  if (!commentData) {
+    throw new Error("Comment not found");
+  }
+
+  const result = await prisma.comment.delete({
+    where: {
+      id: commentData.id,
+    },
+  });
+  return result;
+};
 export const commentService = {
   createComment,
   getCommentById,
   getCommentByAuthorId,
+  deleteComment,
 };

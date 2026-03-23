@@ -19,5 +19,10 @@ router.get(
   auth(UserRole.USER, UserRole.ADMIN),
   commentController.getCommentByAuthorId,
 );
+router.delete(
+  "/:commentId",
+  auth(UserRole.USER, UserRole.ADMIN),
+  commentController.deleteComment,
+);
 
 export default router;
