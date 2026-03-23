@@ -112,6 +112,14 @@ const getAllPosts = async ({
     where: {
       AND: andCondition,
     },
+    //showing the count of all comments
+    include: {
+      _count: {
+        select: {
+          comments: true,
+        },
+      },
+    },
   });
 
   //!Getting total data
@@ -154,12 +162,21 @@ const getPostById = async (postId: string) => {
           where: {
             parentId: null,
           },
+          //sorting comments
+          orderBy: { createdAt: "desc" },
           include: {
             replies: {
               include: {
                 replies: true,
               },
+              orderBy: { createdAt: "asc" },
             },
+          },
+        },
+        //counting comments
+        _count: {
+          select: {
+            comments: true,
           },
         },
       },
