@@ -1,3 +1,4 @@
+import { CommentStatus } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 
 const createComment = async ({
@@ -93,7 +94,6 @@ const getCommentByAuthorId = async (authorId: string) => {
 //            2. authorId with comment's authorId
 
 //! For deleting in cascading order, we have to add onDelete:Cascade on the schema
-
 const deleteComment = async (commentId: string, authorId: string) => {
   const commentData = await prisma.comment.findFirst({
     where: {
@@ -112,9 +112,41 @@ const deleteComment = async (commentId: string, authorId: string) => {
   });
   return result;
 };
+
+//Updating comment
+const updateComment = async (
+  commentId: string,
+  authorId: string,
+  { content, status }: { content?: string; status: CommentStatus },
+) => {
+  const commentData = await prisma.comment.findFirst({
+    where: {
+      id: commentId,
+      authorId,
+    },
+    select: {
+      id: true,
+    },
+  });
+  if (!commentData) {
+    throw new Error("Comment not found!");
+  }
+  const result = await prisma.comment.update({
+    where: {
+      id: commentId,
+      authorId,
+    },
+    data: {
+      content,
+      status,
+    },
+  });
+  return result;
+};
 export const commentService = {
   createComment,
   getCommentById,
   getCommentByAuthorId,
   deleteComment,
+  updateComment,
 };

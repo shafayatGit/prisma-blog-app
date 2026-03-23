@@ -64,8 +64,11 @@ const getCommentByAuthorId = async (req: Request, res: Response) => {
 const deleteComment = async (req: Request, res: Response) => {
   try {
     const user = req.user;
-    const {commentId} = req.params;
-    const result = await commentService.deleteComment(commentId as string, user?.id as string);
+    const { commentId } = req.params;
+    const result = await commentService.deleteComment(
+      commentId as string,
+      user?.id as string,
+    );
     res.status(200).json({
       data: result,
     });
@@ -78,9 +81,27 @@ const deleteComment = async (req: Request, res: Response) => {
   }
 };
 
+const updateComment = async (req: Request, res: Response) => {
+  try {
+    const {commentId} = req.params;
+    const user = req.user;
+    const result = await commentService.updateComment(commentId as string, user?.id as string, req.body);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({
+      status: false,
+      message: "Failed to update comment",
+    });
+  }
+};
+
 export const commentController = {
   createComment,
   getCommentById,
   getCommentByAuthorId,
-  deleteComment
+  deleteComment,
+  updateComment,
 };
