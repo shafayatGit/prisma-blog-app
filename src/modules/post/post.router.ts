@@ -13,6 +13,8 @@ router.get(
 
 router.get("/:postId", PostConteroller.getPostById);
 
+router.get("/stats/all", auth(UserRole.ADMIN), PostConteroller.getPostStats);
+
 router.post(
   "/",
   auth(UserRole.USER, UserRole.ADMIN),
@@ -26,9 +28,9 @@ router.patch(
 );
 
 router.delete(
-    "/:postId/my-posts",
+  "/:postId/my-posts",
   auth(UserRole.USER, UserRole.ADMIN),
   PostConteroller.deletePost,
-)
+);
 
 export default router;

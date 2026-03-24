@@ -161,6 +161,20 @@ const deletePost = async (req: Request, res: Response) => {
     });
   }
 };
+
+const getPostStats = async (req: Request, res: Response) => {
+  try {
+    const result = await postServices.getPostStats();
+    res.status(200).json({
+      data: result,
+    });
+  } catch (error: any) {
+    return res.status(400).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
 export const PostConteroller = {
   createPost,
   getAllPosts,
@@ -168,4 +182,5 @@ export const PostConteroller = {
   getMyAllPost,
   updateMyPost,
   deletePost,
+  getPostStats
 };

@@ -1,4 +1,8 @@
-import { Post, PostStatus } from "../../../generated/prisma/client";
+import {
+  CommentStatus,
+  Post,
+  PostStatus,
+} from "../../../generated/prisma/client";
 import { PostWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
 
@@ -263,6 +267,46 @@ const deletePost = async (id: string, authorId: string, isAdmin: boolean) => {
   return result;
 };
 
+const getPostStats = async () => {
+  // postCount,pulishedPosts,draftPosts, archivedPost, totalComments,totalViews
+  return await prisma.$transaction(async (tx) => {
+    const postCount = await tx.post.count();
+    const pulishedPosts = await tx.post.count({
+      where: {
+        status: PostStatus.PUBLISHED,
+      },
+    });
+    const draftPosts = await tx.post.count({
+      where: {
+        status: PostStatus.DRAFT,
+      },
+    });
+    const archivedPost = await tx.post.count({
+      where: {
+        status: PostStatus.ARCHIVED,
+      },
+    });
+    const totalComments = await tx.comment.count();
+    const approvedComment = await tx.comment.count({
+      where: {
+        status: CommentStatus.APPROVED,
+      },
+    });
+    const totalViews = await tx.post.aggregate({
+      _sum: { views: true },
+    });
+    return {
+      postCount,
+      pulishedPosts,
+      draftPosts,
+      archivedPost,
+      totalComments,
+      approvedComment,
+      totalViews: totalViews._sum.views
+    };
+  });
+};
+
 export const postServices = {
   createPost,
   getAllPosts,
@@ -270,4 +314,5 @@ export const postServices = {
   getMyAllPost,
   updateMyPost,
   deletePost,
+  getPostStats,
 };
