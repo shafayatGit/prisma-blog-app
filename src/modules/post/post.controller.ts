@@ -130,8 +130,27 @@ const updateMyPost = async (req: Request, res: Response) => {
       user?.id as string,
       postId as string,
       req.body,
-      isAdmin as boolean
+      isAdmin as boolean,
     );
+    res.status(200).json({
+      data: result,
+    });
+  } catch (error: any) {
+    return res.status(400).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+const deletePost = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+    const { postId } = req.params;
+
+    const isAdmin = req.user?.role === UserRole.ADMIN;
+
+    const result = await postServices.deletePost(postId as string,user?.id as string,isAdmin as boolean);
     res.status(200).json({
       data: result,
     });
@@ -148,4 +167,5 @@ export const PostConteroller = {
   getPostById,
   getMyAllPost,
   updateMyPost,
+  deletePost,
 };

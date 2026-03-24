@@ -25,4 +25,10 @@ router.patch(
   PostConteroller.updateMyPost,
 );
 
+router.delete(
+    "/:postId/my-posts",
+  auth(UserRole.USER, UserRole.ADMIN),
+  PostConteroller.deletePost,
+)
+
 export default router;
