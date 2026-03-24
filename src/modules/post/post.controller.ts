@@ -109,11 +109,11 @@ const getMyAllPost = async (req: Request, res: Response) => {
     res.status(200).json({
       data: result,
     });
-  } catch (error) {
-    console.log(error);
-    return res.status(404).json({
+  } catch (error: any) {
+    // console.log(error);
+    return res.status(400).json({
       status: false,
-      message: "Failed to get all posts",
+      message: error.message,
     });
   }
 };
