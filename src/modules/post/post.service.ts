@@ -213,9 +213,42 @@ const getMyAllPost = async (authorId: string) => {
   });
   return { result, total };
 };
+
+const updateMyPost = async (
+  authorId: string,
+  id: string,
+  data: Partial<Post>,
+  isAdmin: boolean,
+) => {
+  const postData = await prisma.post.findUniqueOrThrow({
+    where: {
+      id,
+      authorId,
+    },
+  });
+  // console.log(postData);
+  if (postData.authorId !== authorId && !isAdmin) {
+    throw new Error("not authorized!");
+  }
+
+  // Jodi admin na hoy tahole change korte parbena
+  if (!isAdmin) {
+    delete data.isFeatured;
+  }
+
+  const result = await prisma.post.update({
+    where: {
+      id: postData.id,
+    },
+    data,
+  });
+  return result;
+};
+
 export const postServices = {
   createPost,
   getAllPosts,
   getPostById,
   getMyAllPost,
+  updateMyPost,
 };

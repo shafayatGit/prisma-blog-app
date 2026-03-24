@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { postServices } from "./post.service";
 import { PostStatus } from "../../../generated/prisma/enums";
 import paginationSortingHelper from "../../helper/paginationSorting";
+import { UserRole } from "../../middleware/auth";
 
 const createPost = async (req: Request, res: Response) => {
   if (!req.user) {
@@ -117,9 +118,34 @@ const getMyAllPost = async (req: Request, res: Response) => {
     });
   }
 };
+
+const updateMyPost = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+    const { postId } = req.params;
+
+    const isAdmin = req.user?.role === UserRole.ADMIN;
+
+    const result = await postServices.updateMyPost(
+      user?.id as string,
+      postId as string,
+      req.body,
+      isAdmin as boolean
+    );
+    res.status(200).json({
+      data: result,
+    });
+  } catch (error: any) {
+    return res.status(400).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
 export const PostConteroller = {
   createPost,
   getAllPosts,
   getPostById,
   getMyAllPost,
+  updateMyPost,
 };

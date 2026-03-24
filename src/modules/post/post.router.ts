@@ -19,4 +19,10 @@ router.post(
   PostConteroller.createPost,
 );
 
+router.patch(
+  "/:postId/my-posts",
+  auth(UserRole.USER, UserRole.ADMIN),
+  PostConteroller.updateMyPost,
+);
+
 export default router;
