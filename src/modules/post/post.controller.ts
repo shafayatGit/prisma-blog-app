@@ -102,8 +102,24 @@ const getPostById = async (req: Request, res: Response) => {
   }
 };
 
+const getMyAllPost = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+    const result = await postServices.getMyAllPost(user?.id as string);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({
+      status: false,
+      message: "Failed to get all posts",
+    });
+  }
+};
 export const PostConteroller = {
   createPost,
   getAllPosts,
   getPostById,
+  getMyAllPost,
 };
