@@ -120,6 +120,7 @@ const updateComment = async (
 
   data: { content?: string; status: CommentStatus },
 ) => {
+  //checking if the comment is axists or not using commentId and authorId
   const commentData = await prisma.comment.findFirst({
     where: {
       id: commentId,
@@ -132,12 +133,41 @@ const updateComment = async (
   if (!commentData) {
     throw new Error("Comment not found!");
   }
-  // const updateData: { content?: string | null; status: CommentStatus } = { status };
+
   const result = await prisma.comment.update({
     where: {
       id: commentId,
       authorId,
     },
+    data,
+  });
+  return result;
+};
+
+const moderateComment = async (id: string, data: { status: CommentStatus }) => {
+  //first check if it is avaible or not
+  const commentData = await prisma.comment.findUniqueOrThrow({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      status: true,
+    },
+  });
+
+  if (commentData.status === data.status) {
+    throw new Error(
+      `Your provided status ${data.status} is already up to date`,
+    );
+  }
+
+  //the update
+  const result = await prisma.comment.update({
+    where: {
+      id,
+    },
+
     data,
   });
   return result;
@@ -148,4 +178,5 @@ export const commentService = {
   getCommentByAuthorId,
   deleteComment,
   updateComment,
+  moderateComment,
 };
