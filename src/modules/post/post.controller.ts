@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { postServices } from "./post.service";
 import { PostStatus } from "../../../generated/prisma/enums";
 import paginationSortingHelper from "../../helper/paginationSorting";
 import { UserRole } from "../../middleware/auth";
 
-const createPost = async (req: Request, res: Response) => {
+const createPost = async (req: Request, res: Response, next: NextFunction) => {
   if (!req.user) {
     return res.status(404).json({
       status: false,
@@ -22,11 +22,7 @@ const createPost = async (req: Request, res: Response) => {
       user: req.user,
     });
   } catch (error) {
-    console.log(error);
-    return res.status(404).json({
-      status: false,
-      message: "Failed to create the post",
-    });
+    next(error);
   }
 };
 
@@ -150,7 +146,11 @@ const deletePost = async (req: Request, res: Response) => {
 
     const isAdmin = req.user?.role === UserRole.ADMIN;
 
-    const result = await postServices.deletePost(postId as string,user?.id as string,isAdmin as boolean);
+    const result = await postServices.deletePost(
+      postId as string,
+      user?.id as string,
+      isAdmin as boolean,
+    );
     res.status(200).json({
       data: result,
     });
@@ -182,5 +182,5 @@ export const PostConteroller = {
   getMyAllPost,
   updateMyPost,
   deletePost,
-  getPostStats
+  getPostStats,
 };
