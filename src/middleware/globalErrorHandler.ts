@@ -11,7 +11,7 @@ function errorHandler(
   }
   res.status(500);
   res.json({
-    message: "Error from errorHandler",
+    message: "Error From ErrorHandler",
     error: err.message,
   });
 }
