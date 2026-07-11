@@ -67,10 +67,10 @@ app.post("/init-payment", async (req: Request, res: Response) => {
     total_amount: 1000,
     currency: "BDT",
     tran_id,
-    success_url: `${process.env.BASE_URL}/payment/success`,
-    fail_url: `${process.env.BASE_URL}/payment/fail`,
-    cancel_url: `${process.env.BASE_URL}/payment/cancel`,
-    ipn_url: `${process.env.BASE_URL}/payment/ipn`,
+    success_url: `${process.env.NGROK_URL}/payment/success`,
+    fail_url: `${process.env.NGROK_URL}/payment/fail`,
+    cancel_url: `${process.env.NGROK_URL}/payment/cancel`,
+    ipn_url: `${process.env.NGROK_URL}/payment/ipn`,
     shipping_method: "Courier",
     product_name: "Sample Product",
     product_category: "General",
@@ -93,7 +93,7 @@ app.post("/init-payment", async (req: Request, res: Response) => {
 
   const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
   const apiResponse = await sslcz.init(data);
-  console.log("SSLCommerz API Response:", apiResponse);
+  // console.log("SSLCommerz API Response:", apiResponse);
 
   // Persist tran_id + order in your DB here as "PENDING" before redirecting
 
@@ -104,6 +104,7 @@ app.post("/init-payment", async (req: Request, res: Response) => {
 
 // IPN listener — SSLCommerz posts here after payment
 app.post("/payment/ipn", async (req: Request, res: Response) => {
+  console.log("IPN received:", req.body);
   const { val_id, tran_id } = req.body;
 
   const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
